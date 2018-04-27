@@ -31,6 +31,7 @@ import {
   Tooltips,
   Typography,
   Widgets,
+  ReactTableExample
 } from './views';
 import Full from './containers/Full';
 
@@ -74,6 +75,8 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', component: Modals },
   { path: '/widgets', name: 'Widgets', component: Widgets },
   { path: '/charts', name: 'Charts', component: Charts },
+  { path: '/exampletables', name: 'Sample Core UI Tables', component: Tables },
+  { path: '/reacttable', name: 'React Table', component: ReactTableExample }
 ];
 
 export default routes;
