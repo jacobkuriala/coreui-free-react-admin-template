@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { HashRouter, Route, Switch } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 import './App.css';
 // Styles
 // Import Flag Icons Set
@@ -19,18 +19,38 @@ import { Login, Page404, Page500, Register } from './views/Pages';
 
 // import { renderRoutes } from 'react-router-config';
 
+// auth0
+import { Redirect} from 'react-router-dom';
+import Callback from './Callback/Callback';
+import Auth from './Auth/Auth';
+import history from './history';
+
+const auth = new Auth();
+
+const handleAuthentication = ({location}) => {
+  if (/access_token|id_token|error/.test(location.hash)) {
+    auth.handleAuthentication();
+  }
+};
+
 class App extends Component {
   render() {
     return (
-      <HashRouter>
+      <Router history={history}>
         <Switch>
-          <Route exact path="/login" name="Login Page" component={Login} />
-          <Route exact path="/register" name="Register Page" component={Register} />
+          {/*<Route exact path="/login" name="Login Page" component={Login} />*/}
+          {/*<Route exact path="/register" name="Register Page" component={Register} />*/}
           <Route exact path="/404" name="Page 404" component={Page404} />
           <Route exact path="/500" name="Page 500" component={Page500} />
-          <Route path="/" name="Home" component={Full} />
+          <Route path="/callback" render={(props) => {
+            handleAuthentication(props);
+            return <Callback {...props} />
+          }}/>
+          <Route path="/" name="Home" render={(props) =>{
+            return <Full auth={auth} {...props} />}
+          }/>
         </Switch>
-      </HashRouter>
+      </Router>
     );
   }
 }

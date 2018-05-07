@@ -11,10 +11,16 @@ const propTypes = {
 const defaultProps = {};
 
 class FullHeader extends Component {
+
+  logout() {
+    this.props.auth.logout();
+  }
+
   render() {
 
     // eslint-disable-next-line
     const { children, ...attributes } = this.props;
+
 
     return (
       <React.Fragment>
@@ -63,7 +69,7 @@ class FullHeader extends Component {
               <DropdownItem><i className="fa fa-file"></i> Projects<Badge color="primary">42</Badge></DropdownItem>
               <DropdownItem divider />
               <DropdownItem><i className="fa fa-shield"></i> Lock Account</DropdownItem>
-              <DropdownItem><i className="fa fa-lock"></i> Logout</DropdownItem>
+              <DropdownItem onClick={this.logout.bind(this)}><i className="fa fa-lock"></i> Logout</DropdownItem>
             </DropdownMenu>
           </AppHeaderDropdown>
         </Nav>
