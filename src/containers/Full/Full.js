@@ -35,8 +35,9 @@ class Full extends Component {
       'drivemotors.auth0.com',{
         theme:{
           logo: 'https://www.drivemotors.com/assets/logos/drive_logo_march_14.svg'
-        }
-
+        },
+        allowSignUp: false,
+        allowedConnections: ['Username-Password-Authentication']
       }
     );
     this.lock.on("authenticated", function(authResult) {
@@ -51,6 +52,7 @@ class Full extends Component {
           return;
         }
         console.log(authResult);
+        console.log(profile);
         localStorage.setItem('accessToken', authResult.accessToken);
         localStorage.setItem('profile', JSON.stringify(profile));
 
@@ -69,63 +71,64 @@ class Full extends Component {
     const { isAuthenticated } = this.props.auth;
     console.log('render');
     console.log(this.props.auth.isAuthenticated());
-    return (<div className="container">
-        {
-          isAuthenticated() && (
-            <div className="app">
-              <AppHeader fixed>
-                <FullHeader auth={this.props.auth} />
-              </AppHeader>
-              <div className="app-body">
-                <AppSidebar fixed display="lg">
-                  <AppSidebarHeader />
-                  <AppSidebarForm />
-                  <AppSidebarNav navConfig={navigation} {...this.props} />
-                  <AppSidebarFooter />
-                  <AppSidebarMinimizer />
-                </AppSidebar>
-                <main className="main">
-                  <AppBreadcrumb appRoutes={routes}/>
-                  <Container fluid>
-                    <Switch>
-                      {routes.map((route, idx) => {
-                          return route.component ? (<Route key={idx} path={route.path} exact={route.exact} name={route.name} render={props => (
-                              <route.component {...props} />
-                            )} />)
-                            : (null);
-                        },
-                      )}
-                      <Redirect from="/" to="/dashboard" />
-                    </Switch>
-                  </Container>
-                </main>
-                <AppAside fixed hidden>
-                  <FullAside />
-                </AppAside>
-              </div>
-              <AppFooter>
-                <FullFooter />
-              </AppFooter>
+    let displayHtml = null;
+    if (isAuthenticated()){
+      displayHtml = (<div>
+          <div className="app">
+            <AppHeader fixed>
+              <FullHeader auth={this.props.auth} />
+            </AppHeader>
+            <div className="app-body">
+              <AppSidebar fixed display="lg">
+                <AppSidebarHeader />
+                <AppSidebarForm />
+                <AppSidebarNav navConfig={navigation} {...this.props} />
+                <AppSidebarFooter />
+                <AppSidebarMinimizer />
+              </AppSidebar>
+              <main className="main">
+                <AppBreadcrumb appRoutes={routes}/>
+                <Container fluid>
+                  <Switch>
+                    {routes.map((route, idx) => {
+                        return route.component ? (<Route key={idx} path={route.path} exact={route.exact} name={route.name} render={props => (
+                            <route.component {...props} />
+                          )} />)
+                          : (null);
+                      },
+                    )}
+                    <Redirect from="/" to="/dashboard" />
+                  </Switch>
+                </Container>
+              </main>
+              <AppAside fixed hidden>
+                <FullAside />
+              </AppAside>
             </div>
-          )
-        }
-        {
-          !isAuthenticated() && (
-            <h4>
-              You are not logged in! Please{' '}
-              <a
-                style={{ cursor: 'pointer' }}
-                // onClick={this.login.bind(this)
-                onClick={this.login.bind(this)}
-              >
-                Log In
-              </a>
-              {' '}to continue.
-            </h4>
-          )
-        }
-      </div>
-    );
+            <AppFooter>
+              <FullFooter />
+            </AppFooter>
+          </div>
+        </div>
+      );
+    } else {
+      displayHtml = (
+        <div className="container">
+          <h4>
+            You are not logged in! Please{' '}
+            <a
+              style={{ cursor: 'pointer' }}
+              // onClick={this.login.bind(this)
+              onClick={this.login.bind(this)}
+            >
+              Log In
+            </a>
+            {' '}to continue.
+          </h4>
+        </div>
+      )
+    }
+    return displayHtml;
   }
 }
 
