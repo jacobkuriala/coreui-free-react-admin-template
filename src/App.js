@@ -22,7 +22,7 @@ import { Login, Page404, Page500, Register } from './views/Pages';
 // auth0
 import { Redirect} from 'react-router-dom';
 import Callback from './Callback/Callback';
-import Auth from './Auth/Auth';
+import Auth from './middleware/Auth/Auth';
 import history from './history';
 
 const auth = new Auth();

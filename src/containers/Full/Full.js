@@ -21,55 +21,52 @@ import routes from '../../routes';
 import FullAside from './FullAside';
 import FullFooter from './FullFooter';
 import FullHeader from './FullHeader';
-
-import { Auth0Lock} from 'auth0-lock';
-import history from '../../history';
-import Auth from "../../Auth/Auth";
+import {EngineApi}  from './../../middleware/EngineAPI/Api';
 
 class Full extends Component {
   constructor(props){
     super(props);
     console.log('Full constructor');
-    this.lock = new Auth0Lock(
-      'pfLIwsWrtUoFg63I5o7k3JPS7hOAB1cf',
-      'drivemotors.auth0.com',{
-        theme:{
-          logo: 'https://www.drivemotors.com/assets/logos/drive_logo_march_14.svg'
-        },
-        allowSignUp: false,
-        allowedConnections: ['Username-Password-Authentication']
-      }
-    );
-    this.lock.on("authenticated", function(authResult) {
-      // Use the token in authResult to getUserInfo() and save it to localStorage
-      console.log('called loked.on');
-      console.log(this);
-      this.getUserInfo(authResult.accessToken, function(error, profile) {
-        if (error) {
-          // Handle error
-          console.log('error');
-          console.log(error);
-          return;
-        }
-        console.log(authResult);
-        console.log(profile);
-        localStorage.setItem('accessToken', authResult.accessToken);
-        localStorage.setItem('profile', JSON.stringify(profile));
 
-        const auth = new Auth();
-        auth.setSession(authResult);
-        console.log(auth.isAuthenticated());
-      });
-    });
+    this.state = {
+      privateMessage: '',
+      publicMessage: ''
+    };
+    if(!this.props.auth.isAuthenticated()){
+      this.props.auth.lock.show();
+    }
   }
 
   login() {
     // this.props.auth.login();
-    this.lock.show();
+    this.props.auth.lock.show();
   }
+
+  componentDidMount(){
+    console.log('called full.js componentdidmount');
+    EngineApi.getTestPublicApi( (message) =>{
+      this.setState({ publicMessage:message });
+    });
+    EngineApi.getTestPrivateApi(this.props.auth, (message) => {
+      this.setState({ privateMessage:message });
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    console.log('componentDidUpdate');
+    console.log(prevProps.auth.loggedin);
+    console.log(this.props.auth.loggedin);
+    if(prevProps.auth.loggedin !== this.props.auth.loggedin){
+      // EngineApi.getTestPrivateApi(this.props.auth, (message) => {
+      //   this.setState({ privateMessage:message });
+      // });
+    }
+  }
+
   render() {
     const { isAuthenticated } = this.props.auth;
-    console.log('render');
+    const { privateMessage, publicMessage } = this.state;
+    console.log('called full.js render');
     console.log(this.props.auth.isAuthenticated());
     let displayHtml = null;
     if (isAuthenticated()){
@@ -91,8 +88,8 @@ class Full extends Component {
                 <Container fluid>
                   <Switch>
                     {routes.map((route, idx) => {
-                        return route.component ? (<Route key={idx} path={route.path} exact={route.exact} name={route.name} render={props => (
-                            <route.component {...props} />
+                        return route.component ? (<Route key={idx} path={route.path} exact={route.exact} name={route.name} render={ props => (
+                            <route.component {...props} auth={this.props.auth} />
                           )} />)
                           : (null);
                       },
@@ -106,6 +103,12 @@ class Full extends Component {
               </AppAside>
             </div>
             <AppFooter>
+              <div>
+                {privateMessage}
+              </div>
+              <div>
+                {publicMessage}
+              </div>
               <FullFooter />
             </AppFooter>
           </div>
