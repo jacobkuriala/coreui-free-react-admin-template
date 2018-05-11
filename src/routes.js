@@ -31,7 +31,7 @@ import {
   Tooltips,
   Typography,
   Widgets,
-  ReactTableExample
+  OrderList
 } from './views';
 import Full from './containers/Full';
 
@@ -75,7 +75,8 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', component: Modals },
   { path: '/widgets', name: 'Widgets', component: Widgets },
   { path: '/charts', name: 'Charts', component: Charts },
-  { path: '/exampletables', name: 'Sample Core UI Tables', component: Tables }
+  { path: '/exampletables', name: 'Sample Core UI Tables', component: Tables },
+  { path: '/orders', name: 'Orders', component: OrderList}
 ];
 
 export default routes;

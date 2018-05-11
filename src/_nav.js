@@ -10,6 +10,11 @@ export default {
       },
     },
     {
+      url: '/orders',
+      name: 'Orders',
+      class: ''             // optional class names space delimited list for title item ex: "text-center"
+    },
+    {
       title: true,
       name: 'Testing React-Table',
       wrapper: {            // optional wrapper object
